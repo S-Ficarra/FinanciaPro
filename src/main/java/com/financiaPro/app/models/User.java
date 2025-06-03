@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "users")
 public class User {
 
     @Id
@@ -14,7 +15,10 @@ public class User {
     private int id;
     private String firstName;
     private String name;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
     private String apiKey;
 
 }
