@@ -18,7 +18,7 @@ public class UserService {
         Optional<User> alreadyExisting = userRepository.findByEmail(user.getEmail());
 
         if (alreadyExisting.isPresent()) {
-          throw new IllegalArgumentException("Email already taken");
+          throw new IllegalArgumentException("Error: Email already taken");
         }
 
         return userRepository.save(user);
@@ -28,7 +28,7 @@ public class UserService {
         Optional<User> currentUser = userRepository.findById(id);
 
         if (currentUser.isEmpty()) {
-            throw new IllegalArgumentException("User do not exist");
+            throw new IllegalArgumentException("Error: User do not exist");
         }
 
         return currentUser.get();
@@ -38,7 +38,7 @@ public class UserService {
         Optional<User> currentUser = userRepository.findByEmail(email);
 
         if (currentUser.isEmpty()) {
-            throw new IllegalArgumentException("User do not exist");
+            throw new IllegalArgumentException("Error: User do not exist");
         }
 
         return currentUser.get();

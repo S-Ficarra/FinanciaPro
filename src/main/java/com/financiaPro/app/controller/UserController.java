@@ -13,19 +13,28 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/user/create")
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    @PostMapping("users/create")
+    public ResponseEntity<Object> createUser(@RequestBody User user) {
+
+        try {
+            User newUser = userService.createUser(user);
+            return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
-        User user =  userService.getUserById(id);
-
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @GetMapping("/users/{id}")
+    public ResponseEntity<Object> getUser(@PathVariable Long id) {
+        try {
+            User user =  userService.getUserById(id);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }
