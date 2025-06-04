@@ -16,20 +16,31 @@ public class UserService {
     public User createUser(User user) {
 
         Optional<User> alreadyExisting = userRepository.findByEmail(user.getEmail());
+
         if (alreadyExisting.isPresent()) {
           throw new IllegalArgumentException("Email already taken");
         }
+
         return userRepository.save(user);
     }
 
     public User getUserById(Long id) {
         Optional<User> currentUser = userRepository.findById(id);
+
         if (currentUser.isEmpty()) {
             throw new IllegalArgumentException("User do not exist");
         }
+
         return currentUser.get();
     }
 
+    public User getUserByEmail(String email) {
+        Optional<User> currentUser = userRepository.findByEmail(email);
 
+        if (currentUser.isEmpty()) {
+            throw new IllegalArgumentException("User do not exist");
+        }
 
+        return currentUser.get();
+    }
 }
