@@ -1,10 +1,8 @@
 package com.financiaPro.app.models;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 @Entity
 public class LoanRequest {
 
