@@ -1,14 +1,16 @@
 package com.financiaPro.app.service;
 
+import com.financiaPro.app.models.User;
+import com.financiaPro.app.repository.UserRepository;
+
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.financiaPro.app.models.User;
-import com.financiaPro.app.repository.UserRepository;
 
 
 @Service
@@ -31,7 +33,7 @@ public class UserService {
         Optional<User> alreadyExisting = userRepository.findByEmail(user.getEmail());
 
         if (alreadyExisting.isPresent()) {
-          throw new IllegalArgumentException("Error: Email already taken");
+            throw new IllegalArgumentException("Error: Email already taken");
         }
 
         return userRepository.save(user);
@@ -55,5 +57,26 @@ public class UserService {
         }
 
         return currentUser.get();
+    }
+
+
+    public Map<String, Float> getSummary(String apiKey) {
+
+        Optional<User> user = userRepository.findByApiKey(apiKey);
+
+        if (user.isEmpty()) {
+            throw new IllegalArgumentException("Error: User do not exist");
+        }
+
+        Float revenue = user.get().getRevenues();
+        Float expenses = user.get().getExpenses();
+        Float balance = user.get().getBalance();
+
+        Map<String, Float> result = new HashMap<>();
+        result.put("revenue", revenue);
+        result.put("expenses", expenses);
+        result.put("balance", balance);
+
+        return result;
     }
 }
