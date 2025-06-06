@@ -79,4 +79,24 @@ public class UserService {
 
         return result;
     }
+
+    public Map<String, String> getUserMe(String apiKey) {
+
+        Optional<User> user = userRepository.findByApiKey(apiKey);
+
+        if (user.isEmpty()) {
+            throw new IllegalArgumentException("Error: User do not exist");
+        }
+
+        String firstName = user.get().getFirstName();
+        String name = user.get().getName();
+        String email = user.get().getEmail();
+
+        Map<String, String> result = new HashMap<>();
+        result.put("First name", firstName);
+        result.put("Last name", name);
+        result.put("Email", email);
+
+        return result;
+    }
 }

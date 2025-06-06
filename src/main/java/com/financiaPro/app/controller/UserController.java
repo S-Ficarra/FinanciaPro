@@ -22,7 +22,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("users/create")
+    @PostMapping("users/register")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
 
         try {
@@ -50,11 +50,22 @@ public class UserController {
     @GetMapping("/users/summary")
     public ResponseEntity<Object> getSummary(@RequestBody String apiKey) {
 
-        System.out.print("LAAAAAAAAAAAAAAAAAA");
-        System.out.print(apiKey);
-
         try {
             Map userSummary =  userService.getSummary(apiKey);
+            return new ResponseEntity<>(userSummary, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping("/users/me")
+    public ResponseEntity<Object> getUserMe(@RequestBody String apiKey) {
+
+        try {
+            Map userSummary =  userService.getUserMe(apiKey);
             return new ResponseEntity<>(userSummary, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
