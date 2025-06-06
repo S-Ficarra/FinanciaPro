@@ -3,12 +3,7 @@ package com.financiaPro.app.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.financiaPro.app.models.User;
 import com.financiaPro.app.service.UserService;
@@ -17,12 +12,12 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("users/register")
+    @PostMapping("/register")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
         try {
             User newUser = userService.createUser(user);
@@ -34,7 +29,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Object> getUser(@PathVariable Long id) {
         try {
             User user =  userService.getUserById(id);
@@ -46,8 +41,8 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/summary")
-    public ResponseEntity<Object> getSummary(@RequestBody String apiKey) {
+    @GetMapping("/summary")
+    public ResponseEntity<Object> getSummary(@RequestHeader("X-API-KEY") String apiKey) {
 
         try {
             Map userSummary =  userService.getSummary(apiKey);
@@ -60,8 +55,8 @@ public class UserController {
     }
 
 
-    @GetMapping("/users/me")
-    public ResponseEntity<Object> getUserMe(@RequestBody String apiKey) {
+    @GetMapping("/me")
+    public ResponseEntity<Object> getUserMe(@RequestHeader("X-API-KEY") String apiKey) {
 
         try {
             Map userSummary =  userService.getUserMe(apiKey);

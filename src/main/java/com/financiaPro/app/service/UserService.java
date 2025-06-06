@@ -77,6 +77,15 @@ public class UserService {
         return currentUser.get();
     }
 
+    public User getUserByApiKey(String apiKey) {
+        Optional<User> user = userRepository.findByApiKey(apiKey);
+
+        if (user.isEmpty()) {
+            throw new IllegalArgumentException("Error: User do not exist");
+        }
+        return user.get();
+    }
+
 
     public Map<String, Float> getSummary(String apiKey) {
 
