@@ -15,6 +15,6 @@ public class BudgetItem {
     private Float amount;
     private String description;
     private Date date;
-    private int user_Id;
+    private int user_id;
 
 }
