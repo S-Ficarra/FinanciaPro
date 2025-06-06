@@ -10,8 +10,8 @@ public class Repayement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    private int id;
-    private int loanRequestId;
+    private Long id;
+    private Long loanRequestId;
     private Float amount;
     private Date date;
     private String comment;

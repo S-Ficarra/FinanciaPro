@@ -10,11 +10,11 @@ public class BudgetItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    private int id;
+    private Long id;
     private BudgetType type;
     private Float amount;
     private String description;
     private Date date;
-    private int user_id;
+    private Long user_id;
 
 }
