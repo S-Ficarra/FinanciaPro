@@ -1,6 +1,5 @@
 package com.financiaPro.app.service;
 
-import java.lang.reflect.Array;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import com.financiaPro.app.models.BudgetItem;
 import com.financiaPro.app.models.BudgetType;
+import com.financiaPro.app.models.User;
 import com.financiaPro.app.repository.BudgetItemRepository;
+import com.financiaPro.app.repository.UserRepository;
 
 
 @Service
@@ -20,6 +21,13 @@ public class BudgetItemService {
 
     @Autowired
     private BudgetItemRepository budgetItemReposity;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
+
 
     private boolean isSameDay(Date date1, Date date2) {
         Calendar cal1 = Calendar.getInstance();
@@ -31,6 +39,24 @@ public class BudgetItemService {
     }
 
     public BudgetItem createBudgetItem(BudgetItem budgetItem) {
+        Optional<User> user = userRepository.findById(budgetItem.getUser_id());
+
+        if (!user.isPresent()) {
+            throw new IllegalArgumentException("Error: User does not exist");
+        }
+
+        if (budgetItem.getType() == BudgetType.INCOME) {
+            Float newRevenue = user.get().getRevenues() + budgetItem.getAmount();
+            user.get().setRevenues(newRevenue);
+            user.get().setBalance(user.get().getBalance() + budgetItem.getAmount());
+            userService.updateUser(user.get());
+        } else if (budgetItem.getType() == BudgetType.EXPENSE) {
+            Float newExpense = user.get().getExpenses() + budgetItem.getAmount();
+            user.get().setExpenses(newExpense);
+            user.get().setBalance(user.get().getBalance() - budgetItem.getAmount());
+            userService.updateUser(user.get());
+        }
+
         return budgetItemReposity.save(budgetItem);
     }
 

@@ -9,9 +9,9 @@ public class LoanRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    private int id;
-    private int borrowerId;
-    private int lenderId;
+    private Long id;
+    private Long borrowerId;
+    private Long lenderId;
     private Float amount;
     private Float interest;
     private int duration;

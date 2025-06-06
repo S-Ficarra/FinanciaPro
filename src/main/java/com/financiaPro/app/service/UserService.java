@@ -21,7 +21,7 @@ public class UserService {
 
     public static String generateApiKey() {
         SecureRandom random = new SecureRandom();
-        byte[] bytes = new byte[32]; // 256 bits
+        byte[] bytes = new byte[32];
         random.nextBytes(bytes);
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
@@ -35,6 +35,24 @@ public class UserService {
         if (alreadyExisting.isPresent()) {
             throw new IllegalArgumentException("Error: Email already taken");
         }
+
+        return userRepository.save(user);
+    }
+
+    public User updateUser(User user) {
+        Optional<User> userToUpdate = userRepository.findById(user.getId());
+
+        if (!userToUpdate.isPresent()) {
+            throw new IllegalArgumentException("Error: User does not exist");
+        }
+
+        userToUpdate.get().setFirstName(user.getFirstName());
+        userToUpdate.get().setName(user.getName());
+        userToUpdate.get().setEmail(user.getEmail());
+        userToUpdate.get().setApiKey(user.getApiKey());
+        userToUpdate.get().setBalance(user.getBalance());
+        userToUpdate.get().setRevenues(user.getRevenues());
+        userToUpdate.get().setExpenses(user.getExpenses());
 
         return userRepository.save(user);
     }
