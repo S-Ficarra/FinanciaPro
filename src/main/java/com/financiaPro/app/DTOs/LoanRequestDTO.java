@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class LoanRequestDTO {
 
-    private int borrowerId;
+    private Long lenderId;
     private Float amount;
     private Float interest;
     private int duration;

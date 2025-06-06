@@ -5,6 +5,8 @@ import com.financiaPro.app.repository.LoanRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class LoanService {
 
@@ -12,9 +14,11 @@ public class LoanService {
     private LoanRequestRepository loanrepository;
 
     public LoanRequest createLoanRequest(LoanRequest loanRequest) {
-
         return loanrepository.save(loanRequest);
+    }
 
+    public List<LoanRequest> getUserAllLoanRequest (Long userId) {
+        return loanrepository.findByLenderId(userId);
     }
 
 }

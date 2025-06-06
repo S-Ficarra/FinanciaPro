@@ -11,9 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/loan")
 public class LoanController {
+
     @Autowired
     private LoanService loanService;
     @Autowired
@@ -29,8 +32,8 @@ public class LoanController {
 
             LoanRequest loanRequest = new LoanRequest();
 
-            loanRequest.setBorrowerId(loanRequestDTO.getBorrowerId());
-            loanRequest.setLenderId(requestingUser.getId());
+            loanRequest.setBorrowerId(requestingUser.getId());
+            loanRequest.setLenderId(loanRequestDTO.getLenderId());
             loanRequest.setAmount(loanRequestDTO.getAmount());
             loanRequest.setDuration(loanRequestDTO.getDuration());
             loanRequest.setInterest(loanRequestDTO.getInterest());
@@ -44,6 +47,24 @@ public class LoanController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
+
+    @GetMapping("/incoming")
+    public ResponseEntity<Object> getLoanRequests (@RequestHeader("X-API-KEY") String apiKey) {
+
+        try {
+            User user = userService.getUserByApiKey(apiKey);
+            List<LoanRequest> allLoanRequests = loanService.getUserAllLoanRequest(user.getId());
+
+            return new ResponseEntity<>(allLoanRequests, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+
 }
