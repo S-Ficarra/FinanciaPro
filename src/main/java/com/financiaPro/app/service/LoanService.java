@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LoanService {
@@ -26,5 +27,14 @@ public class LoanService {
         List<LoanStatus> statusList = List.of(LoanStatus.REFUSED, LoanStatus.FINISHED);
         return loanrepository.findByBorrowerIdAndStatusIn(userId.intValue(), statusList);
     }
+
+    public LoanRequest acceptLoanRequest (Long loanRequestId) {
+        Optional<LoanRequest> pendingLoanRequest = loanrepository.findById(loanRequestId);
+        LoanRequest acceptedLoanRequest = pendingLoanRequest.get();
+        acceptedLoanRequest.setStatus(LoanStatus.ON_GOING);
+        return acceptedLoanRequest;
+    }
+
+
 
 }

@@ -79,6 +79,20 @@ public class LoanController {
         }
     }
 
+    //UPDATE THIS CODE TO MAKE THE LENDER THE ONLY ONE ABLE TO ACCEPT LOAN
+    @PutMapping("/{id}/accept")
+    public ResponseEntity<Object> acceptLoanRequest (@PathVariable Long id, @RequestHeader("X-API-KEY") String apiKey) {
+
+        try {
+            LoanRequest acceptedLoanRequest = loanService.acceptLoanRequest(id);
+            return new ResponseEntity<>(acceptedLoanRequest, HttpStatus.ACCEPTED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 
 
