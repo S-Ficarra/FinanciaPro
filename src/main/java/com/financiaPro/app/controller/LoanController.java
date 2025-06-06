@@ -1,4 +1,49 @@
 package com.financiaPro.app.controller;
 
+import com.financiaPro.app.DTOs.LoanRequestDTO;
+import com.financiaPro.app.models.LoanRequest;
+import com.financiaPro.app.models.LoanStatus;
+import com.financiaPro.app.models.User;
+import com.financiaPro.app.service.LoanService;
+import com.financiaPro.app.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/loan")
 public class LoanController {
+    @Autowired
+    private LoanService loanService;
+    @Autowired
+    private UserService userService;
+
+
+    @PostMapping("/request")
+    public ResponseEntity<Object> requestLoan (@RequestBody LoanRequestDTO loanRequestDTO, @RequestHeader("X-API-KEY") String apiKey) {
+
+        try {
+
+            User requestingUser = userService.getUserByApiKey(apiKey);
+
+            LoanRequest loanRequest = new LoanRequest();
+
+            loanRequest.setBorrowerId(loanRequestDTO.getBorrowerId());
+            loanRequest.setLenderId(requestingUser.getId());
+            loanRequest.setAmount(loanRequestDTO.getAmount());
+            loanRequest.setDuration(loanRequestDTO.getDuration());
+            loanRequest.setInterest(loanRequestDTO.getInterest());
+            loanRequest.setStatus(LoanStatus.PENDING);
+
+
+            LoanRequest newLoanRequest = loanService.createLoanRequest(loanRequest);
+            return new ResponseEntity<>(newLoanRequest, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
 }
