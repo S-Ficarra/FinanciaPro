@@ -54,9 +54,24 @@ public class LoanController {
 
         try {
             User user = userService.getUserByApiKey(apiKey);
-            List<LoanRequest> allLoanRequests = loanService.getUserAllLoanRequest(user.getId());
+            List<LoanRequest> allLoanRequests = loanService.getUserPendingLoanRequest(user.getId());
 
-            return new ResponseEntity<>(allLoanRequests, HttpStatus.CREATED);
+            return new ResponseEntity<>(allLoanRequests, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<Object> getHistoryLoanRequest (@RequestHeader("X-API-KEY") String apiKey) {
+
+        try {
+            User user = userService.getUserByApiKey(apiKey);
+            List<LoanRequest> allLoanRequests = loanService.getUserHistoryLoanRequest(user.getId());
+
+            return new ResponseEntity<>(allLoanRequests, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
