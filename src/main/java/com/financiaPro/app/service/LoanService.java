@@ -20,18 +20,27 @@ public class LoanService {
     }
 
     public List<LoanRequest> getUserPendingLoanRequest (Long userId) {
-        return loanrepository.findByBorrowerIdAndStatus(userId, LoanStatus.PENDING);
+        return loanrepository.findByLenderIdAndStatus(userId, LoanStatus.PENDING);
     }
 
     public List<LoanRequest> getUserHistoryLoanRequest(Long userId) {
         List<LoanStatus> statusList = List.of(LoanStatus.REFUSED, LoanStatus.FINISHED);
-        return loanrepository.findByBorrowerIdAndStatusIn(userId.intValue(), statusList);
+        return loanrepository.findByLenderIdAndStatusIn(userId.intValue(), statusList);
     }
 
     public LoanRequest acceptLoanRequest (Long loanRequestId) {
         Optional<LoanRequest> pendingLoanRequest = loanrepository.findById(loanRequestId);
         LoanRequest acceptedLoanRequest = pendingLoanRequest.get();
         acceptedLoanRequest.setStatus(LoanStatus.ON_GOING);
+        loanrepository.save(acceptedLoanRequest);
+        return acceptedLoanRequest;
+    }
+
+    public LoanRequest refuseLoanRequest (Long loanRequestId) {
+        Optional<LoanRequest> pendingLoanRequest = loanrepository.findById(loanRequestId);
+        LoanRequest acceptedLoanRequest = pendingLoanRequest.get();
+        acceptedLoanRequest.setStatus(LoanStatus.REFUSED);
+        loanrepository.save(acceptedLoanRequest);
         return acceptedLoanRequest;
     }
 

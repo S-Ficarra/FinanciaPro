@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface LoanRequestRepository extends JpaRepository<LoanRequest, Long> {
 
-    List<LoanRequest> findByBorrowerIdAndStatus(Long borrowerId, LoanStatus status);
-    List<LoanRequest> findByBorrowerIdAndStatusIn(int borrowerId, List<LoanStatus> statusList);
+    List<LoanRequest> findByLenderIdAndStatus(Long lenderId, LoanStatus status);
+    List<LoanRequest> findByLenderIdAndStatusIn(int lenderId, List<LoanStatus> statusList);
 }

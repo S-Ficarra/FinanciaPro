@@ -93,6 +93,19 @@ public class LoanController {
         }
     }
 
+    @PutMapping("/{id}/refuse")
+    public ResponseEntity<Object> refuseLoanRequest (@PathVariable Long id, @RequestHeader("X-API-KEY") String apiKey) {
+
+        try {
+            LoanRequest acceptedLoanRequest = loanService.refuseLoanRequest(id);
+            return new ResponseEntity<>(acceptedLoanRequest, HttpStatus.ACCEPTED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 
 
