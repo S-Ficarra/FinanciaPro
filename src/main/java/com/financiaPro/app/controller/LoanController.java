@@ -84,7 +84,8 @@ public class LoanController {
     public ResponseEntity<Object> acceptLoanRequest (@PathVariable Long id, @RequestHeader("X-API-KEY") String apiKey) {
 
         try {
-            LoanRequest acceptedLoanRequest = loanService.acceptLoanRequest(id);
+            User user = userService.getUserByApiKey(apiKey);
+            LoanRequest acceptedLoanRequest = loanService.acceptLoanRequest(id, apiKey);
             return new ResponseEntity<>(acceptedLoanRequest, HttpStatus.ACCEPTED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -97,7 +98,7 @@ public class LoanController {
     public ResponseEntity<Object> refuseLoanRequest (@PathVariable Long id, @RequestHeader("X-API-KEY") String apiKey) {
 
         try {
-            LoanRequest acceptedLoanRequest = loanService.refuseLoanRequest(id);
+            LoanRequest acceptedLoanRequest = loanService.refuseLoanRequest(id, apiKey);
             return new ResponseEntity<>(acceptedLoanRequest, HttpStatus.ACCEPTED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
