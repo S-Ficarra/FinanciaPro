@@ -63,6 +63,16 @@ public class LoanService {
         return acceptedLoanRequest;
     }
 
-
-
+    public LoanRequest updateLoanRequest(LoanRequest loanRequestUpdated)  {
+        Optional<LoanRequest> currentLoanRequest = loanrepository.findById(loanRequestUpdated.getId());
+        
+        if (!currentLoanRequest.isPresent()) {
+            throw new RuntimeException("This loan request does not exist");
+        }
+    
+        LoanRequest updatedLoanRequest = currentLoanRequest.get();
+        updatedLoanRequest.setAmount(loanRequestUpdated.getAmount());
+        
+        return loanrepository.save(updatedLoanRequest); 
+    }
 }

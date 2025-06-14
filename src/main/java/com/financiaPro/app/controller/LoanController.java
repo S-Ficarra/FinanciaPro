@@ -79,7 +79,6 @@ public class LoanController {
         }
     }
 
-    //UPDATE THIS CODE TO MAKE THE LENDER THE ONLY ONE ABLE TO ACCEPT LOAN
     @PutMapping("/{id}/accept")
     public ResponseEntity<Object> acceptLoanRequest (@PathVariable Long id, @RequestHeader("X-API-KEY") String apiKey) {
 
@@ -106,8 +105,4 @@ public class LoanController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
-
-
 }
