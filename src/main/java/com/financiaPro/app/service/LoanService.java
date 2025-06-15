@@ -41,6 +41,10 @@ public class LoanService {
             throw new RuntimeException("Only the lender can accept a loan request");
         }
 
+        if (lender.getBalance() < 500.0) {
+            throw new RuntimeException("Sorry, this user's amount is less than 500");
+        }
+
         LoanRequest acceptedLoanRequest = pendingLoanRequest.get();
         acceptedLoanRequest.setStatus(LoanStatus.ON_GOING);
         loanrepository.save(acceptedLoanRequest);
