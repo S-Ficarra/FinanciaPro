@@ -30,6 +30,7 @@ public class RepaymentService {
 
     public Repayement createRepayement(Long loanRequestId, String userApiKey, Repayement repayement) {
         Optional<LoanRequest> loanRequest = loanRequestRepository.findById(loanRequestId);
+        User lender = userService.getUserById(loanRequest.get().getLenderId());
         User borrower = userService.getUserById(loanRequest.get().getBorrowerId());
         String borrowerApiKey = borrower.getApiKey();
 
@@ -44,6 +45,15 @@ public class RepaymentService {
                 loanRequest.get().setAmount(currentAmount - repaymentAmount);
                 loanService.updateLoanRequest(loanRequest.get());
                 repayement.setLoanRequestId(loanRequestId);
+
+                borrower.setExpenses(repaymentAmount);
+                borrower.setBalance(borrower.getBalance() - repaymentAmount);
+
+                lender.setRevenues(repaymentAmount);
+                lender.setBalance(lender.getBalance() + repaymentAmount);
+
+                userService.updateUser(borrower);
+                userService.updateUser(lender);
                 
                 return repaymentRepository.save(repayement);
             } else {

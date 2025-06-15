@@ -15,6 +15,7 @@ public class LoanService {
 
     @Autowired
     private LoanRequestRepository loanrepository;
+
     @Autowired
     private UserService userService;
 
@@ -37,6 +38,8 @@ public class LoanService {
         User lender = userService.getUserById(pendingLoanRequest.get().getLenderId());
         String lenderApiKey = lender.getApiKey();
 
+        User borrower = userService.getUserById(pendingLoanRequest.get().getBorrowerId());
+
         if (!lenderApiKey.equals(userApiKey)) {
             throw new RuntimeException("Only the lender can accept a loan request");
         }
@@ -48,6 +51,13 @@ public class LoanService {
         LoanRequest acceptedLoanRequest = pendingLoanRequest.get();
         acceptedLoanRequest.setStatus(LoanStatus.ON_GOING);
         loanrepository.save(acceptedLoanRequest);
+
+        lender.setBalance(lender.getBalance() - acceptedLoanRequest.getAmount());
+        userService.updateUser(lender);
+
+        borrower.setBalance(borrower.getBalance() + acceptedLoanRequest.getAmount());
+        userService.updateUser(borrower);
+
         return acceptedLoanRequest;
     }
 
