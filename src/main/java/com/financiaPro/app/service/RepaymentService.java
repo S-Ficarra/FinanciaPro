@@ -46,10 +46,10 @@ public class RepaymentService {
                 loanService.updateLoanRequest(loanRequest.get());
                 repayement.setLoanRequestId(loanRequestId);
 
-                borrower.setExpenses(repaymentAmount);
+                borrower.setExpenses(borrower.getExpenses() + repaymentAmount);
                 borrower.setBalance(borrower.getBalance() - repaymentAmount);
 
-                lender.setRevenues(repaymentAmount);
+                lender.setRevenues(lender.getRevenues() + repaymentAmount);
                 lender.setBalance(lender.getBalance() + repaymentAmount);
 
                 userService.updateUser(borrower);

@@ -89,4 +89,32 @@ public class LoanService {
         
         return loanrepository.save(updatedLoanRequest); 
     }
+
+    public LoanRequest updateLoanRequestStatus(Long id, LoanStatus status) {
+        Optional<LoanRequest> optionalLoanRequest = loanrepository.findById(id);
+        
+        if (!optionalLoanRequest.isPresent()) {
+            throw new RuntimeException("This loan request does not exist");
+        } 
+
+        LoanRequest updatedLoanRequest = optionalLoanRequest.get();
+        switch (status) {
+            case PENDING:
+                updatedLoanRequest.setStatus(LoanStatus.PENDING);
+                break;
+            case ON_GOING:
+                updatedLoanRequest.setStatus(LoanStatus.ON_GOING);
+                break;
+            case REFUSED:
+                updatedLoanRequest.setStatus(LoanStatus.REFUSED);
+                break;
+            case FINISHED:
+                updatedLoanRequest.setStatus(LoanStatus.FINISHED);
+                break;                
+            default:
+                throw new RuntimeException("Invalid status");
+        } 
+
+        return loanrepository.save(updatedLoanRequest);
+    }
 }

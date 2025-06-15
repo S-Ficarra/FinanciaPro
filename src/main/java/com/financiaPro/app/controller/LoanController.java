@@ -27,18 +27,17 @@ public class LoanController {
     public ResponseEntity<Object> requestLoan (@RequestBody LoanRequestDTO loanRequestDTO, @RequestHeader("X-API-KEY") String apiKey) {
 
         try {
-
             User requestingUser = userService.getUserByApiKey(apiKey);
 
             LoanRequest loanRequest = new LoanRequest();
 
             loanRequest.setBorrowerId(requestingUser.getId());
             loanRequest.setLenderId(loanRequestDTO.getLenderId());
+            loanRequest.setBorrowerId(loanRequestDTO.getBorrowerId());
             loanRequest.setAmount(loanRequestDTO.getAmount());
             loanRequest.setDuration(loanRequestDTO.getDuration());
             loanRequest.setInterest(loanRequestDTO.getInterest());
             loanRequest.setStatus(LoanStatus.PENDING);
-
 
             LoanRequest newLoanRequest = loanService.createLoanRequest(loanRequest);
             return new ResponseEntity<>(newLoanRequest, HttpStatus.CREATED);
@@ -82,10 +81,16 @@ public class LoanController {
     @PutMapping("/{id}/accept")
     public ResponseEntity<Object> acceptLoanRequest (@PathVariable Long id, @RequestHeader("X-API-KEY") String apiKey) {
 
-        try {
-            User user = userService.getUserByApiKey(apiKey);
+        try {          
             LoanRequest acceptedLoanRequest = loanService.acceptLoanRequest(id, apiKey);
-            return new ResponseEntity<>(acceptedLoanRequest, HttpStatus.ACCEPTED);
+            User borrower = userService.getUserById(acceptedLoanRequest.getBorrowerId());
+
+            if (acceptedLoanRequest.getAmount() > borrower.getRevenues() * 2) {
+                return new ResponseEntity<>("Loan request accepted. However, the borrower's revenues are low.", HttpStatus.PARTIAL_CONTENT);
+            } else {
+                return new ResponseEntity<>(acceptedLoanRequest, HttpStatus.ACCEPTED);                
+            }
+
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
