@@ -1,13 +1,13 @@
 package com.financiaPro.app.service;
 
+import com.financiaPro.app.models.BudgetItem;
+import com.financiaPro.app.models.BudgetType;
+import com.financiaPro.app.models.LoanRequest;
 import com.financiaPro.app.models.User;
 import com.financiaPro.app.repository.UserRepository;
 
 import java.security.SecureRandom;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    private LoanService loanService;
+    private BudgetItemService budgetItemService;
 
     public static String generateApiKey() {
         SecureRandom random = new SecureRandom();
@@ -107,23 +109,37 @@ public class UserService {
         return result;
     }
 
+    private boolean isCreditTooHigh(User user) {
+        Float totalCredit = loanService.getUserOnGoingLoanRequest(user.getId());
+
+        List<BudgetItem> incomeItems = budgetItemService.getBudgetItems(null, BudgetType.INCOME, null);
+
+        Float totalIncome = incomeItems.stream()
+                .filter(item -> item.getUser_id().equals(user.getId()))
+                .map(BudgetItem::getAmount)
+                .filter(Objects::nonNull)
+                .reduce(0f, Float::sum);
+
+        return totalCredit > totalIncome * 2;
+    }
+
     public Map<String, String> getUserMe(String apiKey) {
+        Optional<User> userOpt = userRepository.findByApiKey(apiKey);
 
-        Optional<User> user = userRepository.findByApiKey(apiKey);
-
-        if (user.isEmpty()) {
-            throw new IllegalArgumentException("Error: User do not exist");
+        if (userOpt.isEmpty()) {
+            throw new IllegalArgumentException("Error: User does not exist");
         }
 
-        String firstName = user.get().getFirstName();
-        String name = user.get().getName();
-        String email = user.get().getEmail();
+        User user = userOpt.get();
 
         Map<String, String> result = new HashMap<>();
-        result.put("First name", firstName);
-        result.put("Last name", name);
-        result.put("Email", email);
+        result.put("First name", user.getFirstName());
+        result.put("Last name", user.getName());
+        result.put("Email", user.getEmail());
 
+        if (isCreditTooHigh(user)) {
+            result.put("Warning", "Warning!! your credit is too high!!");
+        }
         return result;
     }
 }

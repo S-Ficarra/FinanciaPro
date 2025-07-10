@@ -27,6 +27,24 @@ public class LoanService {
         return loanrepository.findByLenderIdAndStatus(userId, LoanStatus.PENDING);
     }
 
+    public Float getUserOnGoingLoanRequest(Long userId) {
+        List<LoanRequest> allCredits = loanrepository.findByBorrowerIdAndStatus(userId, LoanStatus.ON_GOING);
+
+        float totalAmount = 0f;
+
+        for (LoanRequest credit : allCredits) {
+            Float amount = credit.getAmount();
+            Float interest = credit.getInterest();
+
+            if (amount != null && interest != null) {
+                float interestValue = amount * (interest / 100f);
+                totalAmount += amount + interestValue;
+            }
+        }
+
+        return totalAmount;
+    }
+
     public List<LoanRequest> getUserHistoryLoanRequest(Long userId) {
         List<LoanStatus> statusList = List.of(LoanStatus.REFUSED, LoanStatus.FINISHED);
         return loanrepository.findByLenderIdAndStatusIn(userId.intValue(), statusList);
