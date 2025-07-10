@@ -34,7 +34,7 @@ public class RepaymentService {
         User borrower = userService.getUserById(loanRequest.get().getBorrowerId());
         String borrowerApiKey = borrower.getApiKey();
 
-        Boolean isLoanRequestAccepted = loanRequest.get().getStatus().equals(LoanStatus.ON_GOING);
+        Boolean isLoanRequestAccepted = loanRequest.get().getStatus().equals(LoanStatus.ACCEPTED);
         Boolean isBorrower = borrowerApiKey.equals(userApiKey);
 
         if (loanRequest.isPresent() && isLoanRequestAccepted) {

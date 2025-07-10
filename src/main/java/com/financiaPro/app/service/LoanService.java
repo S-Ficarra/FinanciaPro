@@ -28,7 +28,7 @@ public class LoanService {
     }
 
     public Float getUserOnGoingLoanRequest(Long userId) {
-        List<LoanRequest> allCredits = loanrepository.findByBorrowerIdAndStatus(userId, LoanStatus.ON_GOING);
+        List<LoanRequest> allCredits = loanrepository.findByBorrowerIdAndStatus(userId, LoanStatus.ACCEPTED);
 
         float totalAmount = 0f;
 
@@ -46,8 +46,7 @@ public class LoanService {
     }
 
     public List<LoanRequest> getUserHistoryLoanRequest(Long userId) {
-        List<LoanStatus> statusList = List.of(LoanStatus.REFUSED, LoanStatus.FINISHED);
-        return loanrepository.findByLenderIdAndStatusIn(userId.intValue(), statusList);
+        return loanrepository.findByLenderId(userId.intValue());
     }
 
     public LoanRequest acceptLoanRequest (Long loanRequestId, String userApiKey) {
@@ -67,7 +66,7 @@ public class LoanService {
         }
 
         LoanRequest acceptedLoanRequest = pendingLoanRequest.get();
-        acceptedLoanRequest.setStatus(LoanStatus.ON_GOING);
+        acceptedLoanRequest.setStatus(LoanStatus.ACCEPTED);
         loanrepository.save(acceptedLoanRequest);
 
         lender.setBalance(lender.getBalance() - acceptedLoanRequest.getAmount());
@@ -120,15 +119,12 @@ public class LoanService {
             case PENDING:
                 updatedLoanRequest.setStatus(LoanStatus.PENDING);
                 break;
-            case ON_GOING:
-                updatedLoanRequest.setStatus(LoanStatus.ON_GOING);
+            case ACCEPTED:
+                updatedLoanRequest.setStatus(LoanStatus.ACCEPTED);
                 break;
             case REFUSED:
                 updatedLoanRequest.setStatus(LoanStatus.REFUSED);
                 break;
-            case FINISHED:
-                updatedLoanRequest.setStatus(LoanStatus.FINISHED);
-                break;                
             default:
                 throw new RuntimeException("Invalid status");
         } 
